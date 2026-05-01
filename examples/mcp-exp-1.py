@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import importlib.util
 import json
 import sys
 from pathlib import Path
@@ -12,13 +13,27 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
-from pymemsim_mcp.app import mcp  # noqa: E402
+from pymemsim_mcp.server import create_mcp_server  # noqa: E402
+
+
+def _load_reference_from_module(module_path: Path) -> str:
+    spec = importlib.util.spec_from_file_location("mcp_example_reference", module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Could not load module from: {module_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    reference_content = getattr(module, "REFERENCE_CONTENT", None)
+    if not isinstance(reference_content, str) or len(reference_content.strip()) == 0:
+        raise ValueError("REFERENCE_CONTENT must be a non-empty string in examples/reference.py")
+    return reference_content
 
 
 def load_reference_content(path: str | None) -> str:
-    if path is None:
-        return "replace this string with valid pyThermoDB reference content"
-    return Path(path).read_text(encoding="utf-8")
+    if path is not None:
+        return Path(path).read_text(encoding="utf-8")
+
+    default_module_path = Path(__file__).resolve().parent / "reference.py"
+    return _load_reference_from_module(default_module_path)
 
 
 def build_request(reference_content: str) -> dict[str, Any]:
@@ -78,13 +93,14 @@ async def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--reference",
-        help="Path to a text file containing valid reference_content.",
+        help="Optional path to a text file containing reference_content. If omitted, examples/reference.py is used.",
     )
     args = parser.parse_args()
 
     request = build_request(load_reference_content(args.reference))
 
-    async with Client(mcp) as client:
+    mcp_server = create_mcp_server()
+    async with Client(mcp_server) as client:
         tools = await client.list_tools()
         print("tools:", [tool.name for tool in tools])
 
