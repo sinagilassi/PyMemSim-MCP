@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pymemsim-mcp"
+version = "0.1.0"
+description = "PyMemSim-MCP is an MCP-enabled extension of PyMemSim that integrates model-source-driven thermodynamic data with membrane process simulations.It enables LLMs and agents to interact with membrane models through standardized, machine-readable inputs, ensuring unit consistency, reproducibility, and reliable AI-assisted workflows."
+authors = [
+    { name = "Sina Gilassi", email = "sina.gilassi@gmail.com" }
+]
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "fastmcp>=3.2.4",
+    "pymemsim>=0.3.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/sinagilassi/PyMemSim-MCP"
+"Tracker" = "https://github.com/sinagilassi/PyMemSim-MCP/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pymemsim_mcp*"]
+exclude = ["tests*", "examples*", "docs*"]
+
+[tool.setuptools.package-data]
+"pymemsim_mcp" = ["data/**/*"]
