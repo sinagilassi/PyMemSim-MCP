@@ -1032,7 +1032,7 @@ crypto = [
 
 [[package]]
 name = "pymemsim"
-version = "0.3.0"
+version = "0.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
@@ -1045,9 +1045,9 @@ dependencies = [
     { name = "pythermolinkdb" },
     { name = "scipy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e2/11/6db89ce4a9ded2537dc7ce2650b6a3bcd572471a8c56984b3955193f16e2/pymemsim-0.3.0.tar.gz", hash = "sha256:5504494667e0c4740634ab2727da5f0416a15e98a9962cb102458d31097c51e3", size = 74005, upload-time = "2026-05-01T01:29:01.131Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e6/d4/9fd17bc877d0ae47a74ecafff0d342af663c3c293762b9a7538e9d14097d/pymemsim-0.3.1.tar.gz", hash = "sha256:685d0ba7646741cfb63aca6a2893d5e8e06366ba8216f2f55de1ec78da92c75f", size = 73981, upload-time = "2026-05-01T19:49:50.056Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ad/f7/d2412e7769440863c1cef30a67c0676854cf951f1409a8a45674eda3b8eb/pymemsim-0.3.0-py3-none-any.whl", hash = "sha256:09485c2d80824ef121c35a284377c51f48525ec457f653f45e02801e944d3d22", size = 83544, upload-time = "2026-05-01T01:28:59.917Z" },
+    { url = "https://files.pythonhosted.org/packages/5f/88/e58128f2fd49f7b012d4e19156f14704f590a0853087e2d860a6ccc4120a/pymemsim-0.3.1-py3-none-any.whl", hash = "sha256:bd246f961625091da34efe57649bc3412b34fb72eda65a8e2bd3241f99c7dfd7", size = 83516, upload-time = "2026-05-01T19:49:49.032Z" },
 ]
 
 [[package]]
@@ -1062,7 +1062,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "fastmcp", specifier = ">=3.2.4" },
-    { name = "pymemsim", specifier = ">=0.3.0" },
+    { name = "pymemsim", specifier = ">=0.3.1" },
 ]
 
 [[package]]
