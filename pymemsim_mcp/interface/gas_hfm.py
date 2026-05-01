@@ -2,7 +2,7 @@ from typing import Any, Literal
 
 import numpy as np
 from pydantic import BaseModel, Field
-from pythermodb_settings.models import Component, CustomProp, Temperature
+from pythermodb_settings.models import Component, CustomProp, Temperature, Pressure
 from pymemsim import HFM, create_hfm_module
 from pymemsim.models import (
     HeatTransferOptions,
@@ -98,7 +98,7 @@ class GasHFMSimulationRequest(BaseModel):
         ...,
         description="Feed inlet temperature.",
     )
-    feed_pressure: CustomProp = Field(
+    feed_pressure: Pressure = Field(
         ...,
         description="Feed-side pressure.",
     )
@@ -116,7 +116,7 @@ class GasHFMSimulationRequest(BaseModel):
             "If omitted, PyMemSim uses its default permeate inlet handling."
         ),
     )
-    permeate_pressure: CustomProp | None = Field(
+    permeate_pressure: Pressure | None = Field(
         default=None,
         description=(
             "Optional permeate-side pressure. If omitted, PyMemSim falls back to "
