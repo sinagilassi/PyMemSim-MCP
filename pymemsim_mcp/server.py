@@ -4,6 +4,10 @@ from typing import Literal
 from fastmcp import FastMCP
 # local
 from pymemsim_mcp.interface.gas_hfm import simulate_gas_hfm
+from pymemsim_mcp.interface.resources import (
+    GAS_PHASE_REFERENCE_REQUIREMENTS,
+    LIQUID_PHASE_REFERENCE_REQUIREMENTS,
+)
 from pymemsim_mcp.models.refs import MCPHTTPConfig
 from pymemsim_mcp.tools.check_reference import check_yaml_reference
 
@@ -15,6 +19,33 @@ RunMode = Literal["stdio", "http"]
 
 def create_mcp_server() -> FastMCP:
     mcp = FastMCP("PyMemSim-MCP")
+
+    @mcp.resource(
+        uri="pymemsim://references/gas-phase-requirements",
+        name="Gas Phase Reference Requirements",
+        description=(
+            "Thermodynamic data and equation requirements for gas-phase "
+            "PyMemSim calculations."
+        ),
+        mime_type="text/markdown",
+        tags={"references", "requirements", "gas-phase"},
+    )
+    def get_gas_phase_reference_requirements() -> str:
+        return GAS_PHASE_REFERENCE_REQUIREMENTS
+
+    @mcp.resource(
+        uri="pymemsim://references/liquid-phase-requirements",
+        name="Liquid Phase Reference Requirements",
+        description=(
+            "Thermodynamic data and equation requirements for liquid-phase "
+            "PyMemSim calculations."
+        ),
+        mime_type="text/markdown",
+        tags={"references", "requirements", "liquid-phase"},
+    )
+    def get_liquid_phase_reference_requirements() -> str:
+        return LIQUID_PHASE_REFERENCE_REQUIREMENTS
+
     mcp.tool(
         simulate_gas_hfm,
         description=(
