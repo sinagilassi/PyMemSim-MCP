@@ -1,13 +1,16 @@
+# import libs
 import argparse
 from typing import Literal
-
 from fastmcp import FastMCP
-
+# local
 from pymemsim_mcp.interface.gas_hfm import simulate_gas_hfm
 from pymemsim_mcp.models.refs import MCPHTTPConfig
+from pymemsim_mcp.utils.check_reference import check_yaml_reference
 
 
 RunMode = Literal["stdio", "http"]
+
+# SECTION: MCP server setup and execution
 
 
 def create_mcp_server() -> FastMCP:
@@ -15,23 +18,33 @@ def create_mcp_server() -> FastMCP:
     mcp.tool(
         simulate_gas_hfm,
         description=(
-            "Build a thermodynamic model source from reference content and run a gas "
-            "hollow-fiber membrane simulation."
+            "run a gas hollow-fiber membrane simulation, using pyThermoDB YAML reference content to build the model source."
         ),
+    )
+    mcp.tool(
+        check_yaml_reference,
+        description="Validate pythermodb YAML reference content for use with pyThermoDB.",
     )
     return mcp
 
+# SECTION: MCP server execution
 
-def run_mcp(mode: RunMode = "stdio", http_config: MCPHTTPConfig | None = None) -> None:
+
+def run_mcp(
+        mode: RunMode = "stdio",
+        http_config: MCPHTTPConfig | None = None
+) -> None:
     mcp = create_mcp_server()
     if mode == "stdio":
         mcp.run()
         return
 
     config = http_config or MCPHTTPConfig()
-    mcp.run(transport="http", host=config.host, port=config.port, path=config.path)
+    mcp.run(transport="http", host=config.host,
+            port=config.port, path=config.path)
 
 
+# SECTION: Main execution
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run PyMemSim MCP server.")
     parser.add_argument(
@@ -40,15 +53,19 @@ def main() -> None:
         default="stdio",
         help="MCP transport mode.",
     )
-    parser.add_argument("--host", default="127.0.0.1", help="HTTP host (http mode only).")
-    parser.add_argument("--port", type=int, default=8000, help="HTTP port (http mode only).")
-    parser.add_argument("--path", default="/mcp", help="HTTP path (http mode only).")
+    parser.add_argument("--host", default="127.0.0.1",
+                        help="HTTP host (http mode only).")
+    parser.add_argument("--port", type=int, default=8000,
+                        help="HTTP port (http mode only).")
+    parser.add_argument("--path", default="/mcp",
+                        help="HTTP path (http mode only).")
     args = parser.parse_args()
 
     if args.mode == "http":
         run_mcp(
             mode="http",
-            http_config=MCPHTTPConfig(host=args.host, port=args.port, path=args.path),
+            http_config=MCPHTTPConfig(
+                host=args.host, port=args.port, path=args.path),
         )
         return
 
