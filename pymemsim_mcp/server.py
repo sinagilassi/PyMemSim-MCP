@@ -27,7 +27,7 @@ def create_mcp_server() -> FastMCP:
             "Thermodynamic data and equation requirements for gas-phase "
             "PyMemSim calculations."
         ),
-        mime_type="text/markdown",
+        mime_type="application/yaml",
         tags={"references", "requirements", "gas-phase"},
     )
     def get_gas_phase_reference_requirements() -> str:
@@ -40,7 +40,7 @@ def create_mcp_server() -> FastMCP:
             "Thermodynamic data and equation requirements for liquid-phase "
             "PyMemSim calculations."
         ),
-        mime_type="text/markdown",
+        mime_type="application/yaml",
         tags={"references", "requirements", "liquid-phase"},
     )
     def get_liquid_phase_reference_requirements() -> str:

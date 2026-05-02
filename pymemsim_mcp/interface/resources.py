@@ -3,63 +3,64 @@
 
 # SECTION: Gas-phase reference requirements
 GAS_PHASE_REFERENCE_REQUIREMENTS = """
-# PyMemSim Gas-Phase Reference Requirements
-
-For gas-phase PyMemSim calculations, the reference-making agent must provide the following thermodynamic data and equations.
-
-## Required data tables
-
-- general-data
-
-## Required general-data fields
-
-- No.
-- Name
-- Formula
-- State
-- critical-temperature
-- critical-pressure
-- critical-molar-volume
-- molecular-weight
-- acentric-factor
-- enthalpy-of-formation
-- gibbs-energy-of-formation
-
-## Required equation tables
-
-- ideal-gas-heat-capacity (Cp_IG)
-- vapor-pressure (VaPr)
+reference_requirements:
+  name: PyMemSim Gas-Phase Reference Requirements
+  phase: gas
+  purpose: >
+    For gas-phase PyMemSim calculations, the reference must include the
+    following thermodynamic data and equations.
+  required_data_tables:
+    - general-data
+  required_general_data_fields:
+    - No.
+    - Name
+    - Formula
+    - State
+    - critical-temperature
+    - critical-pressure
+    - critical-molar-volume
+    - molecular-weight
+    - acentric-factor
+    - enthalpy-of-formation
+    - gibbs-energy-of-formation
+  required_equation_tables:
+    - table: ideal-gas-heat-capacity
+      symbol: Cp_IG
+    - table: vapor-pressure
+      symbol: VaPr
 """
 
 # SECTION: Liquid-phase reference requirements
 LIQUID_PHASE_REFERENCE_REQUIREMENTS = """
-# PyMemSim Liquid-Phase Reference Requirements
-
-For liquid-phase PyMemSim calculations, the reference-making agent must provide the following thermodynamic data and equations.
-
-## Required data tables
-
-- general-data
-
-## Required general-data fields
-
-- No.
-- Name
-- Formula
-- State
-- critical-temperature
-- critical-pressure
-- critical-molar-volume
-- molecular-weight
-- acentric-factor
-- enthalpy-of-formation
-- gibbs-energy-of-formation
-
-## Required equation tables
-
-- ideal-gas-heat-capacity (Cp_IG)
-- vapor-pressure (VaPr)
-- liquid-heat-capacity (Cp_LIQ)
-- liquid-density (rho_LIQ)
-- enthalpy-of-vaporization (EnVap)
+reference_requirements:
+  name: PyMemSim Liquid-Phase Reference Requirements
+  phase: liquid
+  purpose: >
+    For liquid-phase PyMemSim calculations, the reference must include the
+    following thermodynamic data and equations.
+  required_data_tables:
+    - general-data
+  required_general_data_fields:
+    - No.
+    - Name
+    - Formula
+    - State
+    - critical-temperature
+    - critical-pressure
+    - critical-molar-volume
+    - molecular-weight
+    - acentric-factor
+    - enthalpy-of-formation
+    - gibbs-energy-of-formation
+  required_equation_tables:
+    - table: ideal-gas-heat-capacity
+      symbol: Cp_IG
+    - table: vapor-pressure
+      symbol: VaPr
+    - table: liquid-heat-capacity
+      symbol: Cp_LIQ
+    - table: liquid-density
+      symbol: rho_LIQ
+    - table: enthalpy-of-vaporization
+      symbol: EnVap
 """
