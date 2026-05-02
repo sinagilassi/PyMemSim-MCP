@@ -62,7 +62,7 @@ def _json_safe(value: Any) -> Any:
 class GasHFMSimulationRequest(BaseModel):
     reference_content: str = Field(
         ...,
-        description="Thermodynamic reference content used to build the model source.",
+        description="pythermodb yaml-format reference content used to build the model source.",
     )
     ignore_state_props: list[str] | None = Field(
         default=['MW', 'Cp_IG', 'Cp_LIQ', 'VaPr', 'EnVap', 'rho_LIQ'],
