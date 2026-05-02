@@ -5,7 +5,7 @@ from fastmcp import FastMCP
 # local
 from pymemsim_mcp.interface.gas_hfm import simulate_gas_hfm
 from pymemsim_mcp.models.refs import MCPHTTPConfig
-from pymemsim_mcp.utils.check_reference import check_yaml_reference
+from pymemsim_mcp.tools.check_reference import check_yaml_reference
 
 
 RunMode = Literal["stdio", "http"]

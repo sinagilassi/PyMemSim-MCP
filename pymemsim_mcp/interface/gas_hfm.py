@@ -12,7 +12,7 @@ from pymemsim.models import (
 from pymemsim.thermo import build_thermo_source
 from pymemsim.utils import Q_std_to_mol_s, analyze_hfm_result
 
-from pymemsim_mcp.utils.model_source_builder import build_model_source_from_reference
+from pymemsim_mcp.tools.model_source_builder import build_model_source_from_reference
 
 
 # SECTION: TYPE ALIASES
