@@ -13,6 +13,7 @@ For gas-phase PyMemSim calculations, the reference-making agent must provide the
 
 ## Required general-data fields
 
+- No.
 - Name
 - Formula
 - State
@@ -42,6 +43,7 @@ For liquid-phase PyMemSim calculations, the reference-making agent must provide 
 
 ## Required general-data fields
 
+- No.
 - Name
 - Formula
 - State
@@ -57,7 +59,7 @@ For liquid-phase PyMemSim calculations, the reference-making agent must provide 
 
 - ideal-gas-heat-capacity (Cp_IG)
 - vapor-pressure (VaPr)
-- liquid-heat-capacity (Cp_L)
-- liquid-density (rho_L)
+- liquid-heat-capacity (Cp_LIQ)
+- liquid-density (rho_LIQ)
 - enthalpy-of-vaporization (EnVap)
 """
