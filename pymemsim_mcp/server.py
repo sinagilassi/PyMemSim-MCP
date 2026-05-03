@@ -10,6 +10,7 @@ from pymemsim_mcp.interface.resources import (
 )
 from pymemsim_mcp.models.refs import MCPHTTPConfig
 from pymemsim_mcp.tools.check_reference import check_yaml_reference
+from pymemsim_mcp.tools.flow_rate_analyzer import hfm_feed_flow_rate_analyzer
 
 
 RunMode = Literal["stdio", "http"]
@@ -55,6 +56,13 @@ def create_mcp_server() -> FastMCP:
     mcp.tool(
         check_yaml_reference,
         description="Validate pythermodb YAML reference content for use with pyThermoDB.",
+    )
+    mcp.tool(
+        hfm_feed_flow_rate_analyzer,
+        description=(
+            "analyze recommended feed flow rate bounds for a hollow-fiber membrane "
+            "module from geometry, operating conditions, and permeance inputs."
+        ),
     )
     return mcp
 
