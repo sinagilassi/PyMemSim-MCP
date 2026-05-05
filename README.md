@@ -4,6 +4,7 @@
 ![PyPI](https://img.shields.io/pypi/v/pymemsim-mcp)
 ![Python Version](https://img.shields.io/pypi/pyversions/pymemsim-mcp.svg)
 ![License](https://img.shields.io/pypi/l/pymemsim-mcp)
+[![MCP](https://img.shields.io/badge/Model_Context_Protocol-Compatible-orange)](https://modelcontextprotocol.io)
 
 PyMemSim-MCP exposes PyMemSim membrane simulation capabilities through an MCP server.
 
@@ -140,3 +141,15 @@ python -m py_compile pymemsim_mcp/interface/gas_hfm.py
 
 - Import errors
   - Reinstall dependencies: `pip install -e .`.
+
+## ❓ FAQ
+
+For any questions, contact me on [LinkedIn](https://www.linkedin.com/in/sina-gilassi/).
+
+## 📄 License
+
+This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Authors
+
+- [@sinagilassi](https://www.github.com/sinagilassi)
