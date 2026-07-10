@@ -221,3 +221,7 @@ __marimo__/
 private/*
 private/
 /private
+
+# agents
+agents/*
+agents/
