@@ -88,6 +88,19 @@ def validate_feed_inputs(
 
 
 def validate_membrane_inputs(request: GasHFMSimulationRequest) -> dict[str, Any] | None:
+    pressure_drop_enabled = (
+        request.feed_pressure_mode == "state_variable"
+        or request.permeate_pressure_mode == "state_variable"
+    )
+    if pressure_drop_enabled and request.module_geometry is None:
+        return failure_response(
+            "Complete module geometry is required for pressure-drop simulations.",
+            warnings=[
+                "When feed_pressure_mode or permeate_pressure_mode is "
+                "'state_variable', provide module_geometry. Direct "
+                "membrane_area_per_length alone is not sufficient."
+            ],
+        )
     if request.membrane_area_per_length is None and request.module_geometry is None:
         return failure_response(
             "Membrane sizing is missing.",
