@@ -10,11 +10,15 @@ from pymemsim_mcp.interface.gas_hfm_models import GasHFMSimulationRequest
 
 def build_unit_options(request: GasHFMSimulationRequest) -> HollowFiberMembraneOptions:
     return HollowFiberMembraneOptions(
-        modeling_type="scale",
+        modeling_type=request.modeling_type,
         phase="gas",
-        feed_pressure_mode="constant",
-        permeate_pressure_mode="constant",
-        gas_model="ideal",
+        feed_pressure_mode=request.feed_pressure_mode,
+        permeate_pressure_mode=request.permeate_pressure_mode,
+        gas_model=request.gas_model,
+        gas_heat_capacity_mode=request.gas_heat_capacity_mode,
+        ideal_gas_formation_enthalpy_mode=request.ideal_gas_formation_enthalpy_mode,
+        molecular_weight_mode=request.molecular_weight_mode,
+        reaction_enthalpy_mode=request.reaction_enthalpy_mode,
         flow_pattern=normalize_flow_pattern(request.flow_pattern),
     )
 
