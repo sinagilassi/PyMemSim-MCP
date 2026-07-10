@@ -39,15 +39,16 @@ def load_reference_content(path: str | None) -> str:
 def build_request(reference_content: str) -> dict[str, Any]:
     return {
         "reference_content": reference_content,
+        "ignore_state_props": ["Cp_LIQ", "VaPr", "EnVap", "rho_LIQ"],
         "components": [
             {
-                "name": "Carbon dioxide",
+                "name": "carbon dioxide",
                 "formula": "CO2",
                 "state": "g",
                 "mole_fraction": 0.6,
             },
             {
-                "name": "Methane",
+                "name": "methane",
                 "formula": "CH4",
                 "state": "g",
                 "mole_fraction": 0.4,
@@ -75,7 +76,15 @@ def build_request(reference_content: str) -> dict[str, Any]:
         "heat_transfer_options": {
             "heat_transfer_mode": "isothermal",
         },
+        "modeling_type": "scale",
         "flow_pattern": "counter-current",
+        "feed_pressure_mode": "constant",
+        "permeate_pressure_mode": "constant",
+        "gas_model": "ideal",
+        "gas_heat_capacity_mode": "temperature-dependent",
+        "ideal_gas_formation_enthalpy_mode": "model_source",
+        "molecular_weight_mode": "model_source",
+        "reaction_enthalpy_mode": "ideal_gas",
         "length_span": [0.0, 0.15],
         "solver_options": {
             "countercurrent_solver": "bvp",
