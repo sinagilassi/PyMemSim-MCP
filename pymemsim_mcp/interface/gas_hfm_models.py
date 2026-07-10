@@ -6,6 +6,12 @@ from pymemsim.models import HeatTransferOptions, HollowFiberMembraneModuleGeomet
 
 
 FlowPattern = Literal["co-current", "counter-current", "cocurrent", "countercurrent"]
+ModelingType = Literal["physical", "scale"]
+PressureMode = Literal["constant", "state_variable"]
+GasModel = Literal["ideal", "real"]
+GasHeatCapacityMode = Literal["constant", "temperature-dependent", "differential"]
+ModelSourceMode = Literal["model_inputs", "model_source"]
+ReactionEnthalpyMode = Literal["ideal_gas", "liquid"]
 
 
 class GasHFMSimulationRequest(BaseModel):
@@ -14,7 +20,7 @@ class GasHFMSimulationRequest(BaseModel):
         description="**pythermodb yaml-based reference content** includes thermodynamic data and equations for all components in the simulation",
     )
     ignore_state_props: list[str] | None = Field(
-        default=['MW', 'Cp_IG', 'Cp_LIQ', 'VaPr', 'EnVap', 'rho_LIQ'],
+        default=['Cp_LIQ', 'VaPr', 'EnVap', 'rho_LIQ'],
         description="State properties to ignore while building component model source.",
     )
     components: list[Component] = Field(
@@ -124,9 +130,64 @@ class GasHFMSimulationRequest(BaseModel):
         default_factory=dict,
         description="Optional thermo inputs passed through to build_thermo_source.",
     )
+    modeling_type: ModelingType = Field(
+        default="scale",
+        description=(
+            "HFM modeling type. `scale` is the default used by the gas API; "
+            "`physical` solves directly in physical state variables."
+        ),
+    )
     flow_pattern: FlowPattern = Field(
         ...,
         description="HFM flow pattern.",
+    )
+    feed_pressure_mode: PressureMode = Field(
+        default="constant",
+        description=(
+            "Feed-side pressure mode. Use `state_variable` to include feed "
+            "pressure drop in the solved state; this requires module_geometry."
+        ),
+    )
+    permeate_pressure_mode: PressureMode = Field(
+        default="constant",
+        description=(
+            "Permeate-side pressure mode. Use `state_variable` to include "
+            "permeate pressure drop in the solved state; this requires module_geometry."
+        ),
+    )
+    gas_model: GasModel = Field(
+        default="ideal",
+        description=(
+            "Gas model passed to PyMemSim. `ideal` is recommended for current "
+            "gas HFM simulations; `real` is type-accepted by PyMemSim."
+        ),
+    )
+    gas_heat_capacity_mode: GasHeatCapacityMode = Field(
+        default="temperature-dependent",
+        description=(
+            "Gas heat-capacity source mode used by the thermo source. "
+            "`temperature-dependent` requires Cp_IG in model_source; `constant` "
+            "requires thermo_inputs['gas_heat_capacity']."
+        ),
+    )
+    ideal_gas_formation_enthalpy_mode: ModelSourceMode = Field(
+        default="model_source",
+        description=(
+            "Source for ideal-gas formation enthalpy. `model_source` requires "
+            "EnFo_IG in the reference; `model_inputs` requires "
+            "thermo_inputs['ideal_gas_formation_enthalpy']."
+        ),
+    )
+    molecular_weight_mode: ModelSourceMode = Field(
+        default="model_source",
+        description=(
+            "Source for molecular weight. Current PyMemSim-MCP gas reference "
+            "building expects molecular weights from model_source."
+        ),
+    )
+    reaction_enthalpy_mode: ReactionEnthalpyMode = Field(
+        default="ideal_gas",
+        description="Reaction enthalpy mode passed to PyMemSim thermo source options.",
     )
     length_span: tuple[float, float] = Field(
         ...,
