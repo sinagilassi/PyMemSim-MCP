@@ -17,6 +17,9 @@
 ### Feed specifications
 
 - Temperature (T): 298.15–338.15 K
+- Feed inlet molar flow rates from validation data:
+  - case-1-1.csv at 298.15 K: 0.0025, 0.0015, 0.001, 0.0001, 6e-05, 4e-05, 3e-05 mol/s
+  - case-1-2.csv at 338.15 K: 0.0025, 0.0015, 0.00014, 0.00013, 0.00011, 0.0001, 9e-05, 7e-05 mol/s
 - Feed pressure (Ps): 401.3 kPa
 - Permeate pressure (Pt): 101.3 kPa
 
