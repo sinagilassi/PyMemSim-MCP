@@ -1,0 +1,26 @@
+{
+  "description": "Feed flow-rate inputs used for validation runs. The case markdown files do not currently specify feed flow rate, so values here are explicit validation assumptions.",
+  "cases": {
+    "case-1": {
+      "source": "examples/case-1.md",
+      "feed_volumetric_flow": {
+        "value": 0.00025,
+        "unit": "m3/min"
+      }
+    },
+    "case-2": {
+      "source": "examples/case-2.md",
+      "feed_volumetric_flow": {
+        "value": 0.00025,
+        "unit": "m3/min"
+      }
+    },
+    "case-3": {
+      "source": "examples/case-3.md",
+      "feed_volumetric_flow": {
+        "value": 0.00025,
+        "unit": "m3/min"
+      }
+    }
+  }
+}
