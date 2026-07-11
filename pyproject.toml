@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pymemsim-mcp"
-version = "0.1.1"
+version = "0.2.0"
 description = "PyMemSim-MCP is an MCP-enabled extension of PyMemSim that integrates model-source-driven thermodynamic data with membrane process simulations.It enables LLMs and agents to interact with membrane models through standardized, machine-readable inputs, ensuring unit consistency, reproducibility, and reliable AI-assisted workflows."
 authors = [
     { name = "Sina Gilassi", email = "sina.gilassi@gmail.com" }
