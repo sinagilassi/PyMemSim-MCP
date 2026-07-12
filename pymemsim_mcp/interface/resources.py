@@ -1,19 +1,19 @@
 # SECTION: Gas-phase HFM reference and scenario requirements
 GAS_PHASE_REFERENCE_REQUIREMENTS = """
 reference_requirements:
-  name: PyMemSim Gas-Phase HFM Scenario Requirements
+  name: PyMemSim Gas-Phase HFM Validation Combinations
   phase: gas
   purpose: >
-    Use this guide to decide which reference data, thermo_inputs, and
-    model inputs are required before running simulate_gas_hfm. Component
-    dictionaries use formula-state labels derived from components, such as
-    CO2-g, CH4-g, O2-g, and N2-g.
+    Use this guide to decide which model inputs and thermophysical
+    properties are required for supported gas-phase HFM simulations across
+    flow pattern, heat transfer mode, and feed/permeate pressure handling.
+    Component dictionaries use formula-state labels derived from
+    components, such as CO2-g, CH4-g, O2-g, and N2-g.
 
   current_limitations:
-    - gas_model should be ideal; real gas paths are type-accepted but not ready for practical simulation.
+    - gas_model accepts ideal and real options, but current thermodynamic flow calculations use ideal-gas behavior in practice.
     - counter-current simulation is implemented for gas modules.
-    - molecular weights are loaded from model_source in the current source path.
-    - heat-capacity mode differential is type-accepted but current paths explicitly support constant and temperature-dependent modes.
+    - For pressure-drop equations, geometry completeness is critical when state_variable pressure mode is enabled on either side.
 
   component_keys:
     format: "{Formula}-{State}"
@@ -30,8 +30,8 @@ reference_requirements:
         choose_exactly_one:
           total_flow_plus_composition:
             required:
-              - feed_inlet_flow or feed_volumetric_flow
-              - feed_mole_fractions or Component.mole_fraction values summing to 1.0
+              - feed_inlet_flow
+              - feed_mole_fractions
           component_flows:
             required:
               - feed_inlet_flows
@@ -49,18 +49,14 @@ reference_requirements:
       transport:
         required:
           gas_transport_coefficients: Gas permeance for every gas component.
-        accepted_units:
-          - GPU
-          - gas permeation unit
-          - mol/s.m2.Pa
       sizing:
         choose_one:
           - membrane_area_per_length
+          - full geometry keys
           - module_geometry
       simulation:
         required:
           - flow_pattern
-          - length_span
           - heat_transfer_options
     model_source:
       required_general_data_fields:
@@ -92,113 +88,141 @@ reference_requirements:
         - isothermal
         - non-isothermal
 
-  scenario_matrix:
-    gas_isothermal_constant_pressure:
-      description: Simplest gas HFM workflow.
-      model_inputs_required:
-        - feed specification
-        - feed_inlet_temperature
-        - feed_pressure
-        - permeate_inlet_temperature if different from feed
-        - permeate_pressure if different from feed
-        - gas_transport_coefficients
-        - membrane_area_per_length or module_geometry
-      thermo_inputs_required:
-        - none
-      model_source_required:
-        - MW
-      not_required:
-        - Cp_IG
-        - EnFo_IG
-        - Vis_GAS
-        - vapor-pressure
+  thermo_property_rules:
+    MW:
+      requirement: Required in practice for all gas workflows.
+    Vis_GAS:
+      requirement: Required when any pressure side uses state_variable.
+    Cp_IG:
+      requirement: Required when heat_transfer_mode is non-isothermal.
 
-    gas_isothermal_variable_pressure:
-      description: Gas HFM with feed-side and/or permeate-side pressure drop.
-      model_inputs_required:
-        - gas isothermal constant-pressure inputs
-        - complete module_geometry
-      thermo_inputs_required:
-        - gas_viscosity only if Vis_GAS is missing from model_source
-      model_source_required:
-        - MW
-        - Vis_GAS unless gas_viscosity is supplied in thermo_inputs
-      geometry_rule: Direct membrane_area_per_length alone is not sufficient for pressure-drop cases.
-
-    gas_non_isothermal_constant_pressure:
-      description: Gas HFM with feed/permeate temperature states and heat-transfer terms.
-      model_inputs_required:
-        - gas isothermal constant-pressure inputs
-        - overall_heat_transfer_coefficient if side-to-side heat transfer is intended
-        - q_ext_feed if external feed heat flux is used
-        - q_ext_permeate if external permeate heat flux is used
-      heat_transfer_options_required:
-        - heat_transfer_mode: non-isothermal
-        - heat_transfer_coefficient for global heat exchange when used
-        - heat_transfer_area for global heat exchange when used
-        - jacket_temperature for global heat exchange when used
-      thermo_inputs_required:
-        - gas_heat_capacity when gas_heat_capacity_mode is constant
-        - ideal_gas_formation_enthalpy when ideal_gas_formation_enthalpy_mode is model_inputs
-      model_source_required:
-        - MW
-        - Cp_IG when gas_heat_capacity_mode is temperature-dependent
-        - EnFo_IG when ideal_gas_formation_enthalpy_mode is model_source
-
-    gas_non_isothermal_variable_pressure:
-      description: Most data-intensive gas HFM workflow.
-      model_inputs_required:
-        - gas non-isothermal constant-pressure inputs
-        - complete module_geometry
-      thermo_inputs_required:
-        - gas_heat_capacity when gas_heat_capacity_mode is constant
-        - ideal_gas_formation_enthalpy when ideal_gas_formation_enthalpy_mode is model_inputs
-        - gas_viscosity only if Vis_GAS is missing from model_source
-      model_source_required:
-        - MW
-        - Vis_GAS unless gas_viscosity is supplied in thermo_inputs
-        - Cp_IG when gas_heat_capacity_mode is temperature-dependent
-        - EnFo_IG when ideal_gas_formation_enthalpy_mode is model_source
+  combination_matrix:
+    - flow_pattern: co-current
+      heat_transfer_mode: isothermal
+      feed_pressure_mode: constant
+      permeate_pressure_mode: constant
+      supported: true
+      additional_model_input_requirement: None beyond common set.
+      required_thermo_properties: [MW]
+    - flow_pattern: co-current
+      heat_transfer_mode: isothermal
+      feed_pressure_mode: state_variable
+      permeate_pressure_mode: constant
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS]
+    - flow_pattern: co-current
+      heat_transfer_mode: isothermal
+      feed_pressure_mode: constant
+      permeate_pressure_mode: state_variable
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS]
+    - flow_pattern: co-current
+      heat_transfer_mode: isothermal
+      feed_pressure_mode: state_variable
+      permeate_pressure_mode: state_variable
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS]
+    - flow_pattern: co-current
+      heat_transfer_mode: non-isothermal
+      feed_pressure_mode: constant
+      permeate_pressure_mode: constant
+      supported: true
+      additional_model_input_requirement: None beyond common set.
+      required_thermo_properties: [MW, Cp_IG]
+    - flow_pattern: co-current
+      heat_transfer_mode: non-isothermal
+      feed_pressure_mode: state_variable
+      permeate_pressure_mode: constant
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS, Cp_IG]
+    - flow_pattern: co-current
+      heat_transfer_mode: non-isothermal
+      feed_pressure_mode: constant
+      permeate_pressure_mode: state_variable
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS, Cp_IG]
+    - flow_pattern: co-current
+      heat_transfer_mode: non-isothermal
+      feed_pressure_mode: state_variable
+      permeate_pressure_mode: state_variable
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS, Cp_IG]
+    - flow_pattern: counter-current
+      heat_transfer_mode: isothermal
+      feed_pressure_mode: constant
+      permeate_pressure_mode: constant
+      supported: true
+      additional_model_input_requirement: None beyond common set.
+      required_thermo_properties: [MW]
+    - flow_pattern: counter-current
+      heat_transfer_mode: isothermal
+      feed_pressure_mode: state_variable
+      permeate_pressure_mode: constant
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS]
+    - flow_pattern: counter-current
+      heat_transfer_mode: isothermal
+      feed_pressure_mode: constant
+      permeate_pressure_mode: state_variable
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS]
+    - flow_pattern: counter-current
+      heat_transfer_mode: isothermal
+      feed_pressure_mode: state_variable
+      permeate_pressure_mode: state_variable
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS]
+    - flow_pattern: counter-current
+      heat_transfer_mode: non-isothermal
+      feed_pressure_mode: constant
+      permeate_pressure_mode: constant
+      supported: true
+      additional_model_input_requirement: None beyond common set.
+      required_thermo_properties: [MW, Cp_IG]
+    - flow_pattern: counter-current
+      heat_transfer_mode: non-isothermal
+      feed_pressure_mode: state_variable
+      permeate_pressure_mode: constant
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS, Cp_IG]
+    - flow_pattern: counter-current
+      heat_transfer_mode: non-isothermal
+      feed_pressure_mode: constant
+      permeate_pressure_mode: state_variable
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS, Cp_IG]
+    - flow_pattern: counter-current
+      heat_transfer_mode: non-isothermal
+      feed_pressure_mode: state_variable
+      permeate_pressure_mode: state_variable
+      supported: true
+      additional_model_input_requirement: Full geometry required for pressure-drop model.
+      required_thermo_properties: [MW, Vis_GAS, Cp_IG]
 
   property_source_matrix:
     MW:
       needed_for:
-        - gas volumetric flow
-        - mixture properties
-        - result analysis
+        - all gas workflows in practice
       required_location: model_source
     Vis_GAS:
       needed_for:
-        - gas pressure drop when either pressure mode is state_variable
-      preferred_location: model_source
-      fallback_location: thermo_inputs.gas_viscosity
+        - pressure-drop model when feed_pressure_mode or permeate_pressure_mode is state_variable
+      required_location: model_source
     Cp_IG:
       needed_for:
-        - non-isothermal gas with temperature-dependent heat capacity
+        - non-isothermal gas workflows
       required_location: model_source
-    gas_heat_capacity:
-      needed_for:
-        - non-isothermal gas with constant heat capacity
-      required_location: thermo_inputs
-    EnFo_IG:
-      needed_for:
-        - ideal-gas formation enthalpy from model_source
-      required_location: model_source
-    ideal_gas_formation_enthalpy:
-      needed_for:
-        - ideal-gas formation enthalpy from user constants
-      required_location: thermo_inputs
-
-  thermo_input_formats:
-    gas_viscosity:
-      CO2-g: {value: 1.48e-5, unit: Pa.s}
-      CH4-g: {value: 1.10e-5, unit: Pa.s}
-    gas_heat_capacity:
-      CO2-g: {value: 37.1, unit: J/mol.K}
-      CH4-g: {value: 35.7, unit: J/mol.K}
-    ideal_gas_formation_enthalpy:
-      CO2-g: {value: -393.5, unit: kJ/mol}
-      CH4-g: {value: -74.8, unit: kJ/mol}
 
   solver_guidance:
     co_current:
@@ -221,13 +245,12 @@ reference_requirements:
         shooting_multistart: true
 
   common_missing_input_diagnostics:
-    missing_feed_total_or_composition: Provide feed_inlet_flow/feed_volumetric_flow plus composition, or feed_inlet_flows.
+    missing_feed_total_or_composition: Provide feed_inlet_flow plus feed_mole_fractions, or feed_inlet_flows.
     mixed_feed_modes: Use feed_inlet_flows or total-flow plus composition, not both.
     missing_transport: Add every component to gas_transport_coefficients.
-    missing_geometry: Complete module_geometry is required when a pressure mode is state_variable.
-    missing_viscosity: Add Vis_GAS to model_source or gas_viscosity to thermo_inputs.
-    missing_heat_capacity: Add Cp_IG to model_source or gas_heat_capacity to thermo_inputs, depending on gas_heat_capacity_mode.
-    missing_formation_enthalpy: Add EnFo_IG to model_source or ideal_gas_formation_enthalpy to thermo_inputs, depending on ideal_gas_formation_enthalpy_mode.
+    missing_geometry: Add full geometry keys or module_geometry when feed_pressure_mode or permeate_pressure_mode is state_variable.
+    missing_viscosity: Add Vis_GAS to model_source when any pressure side uses state_variable.
+    missing_heat_capacity: Add Cp_IG to model_source when heat_transfer_mode is non-isothermal.
 """
 
 
