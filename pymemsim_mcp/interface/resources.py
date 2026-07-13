@@ -50,10 +50,15 @@ reference_requirements:
         required:
           gas_transport_coefficients: Gas permeance for every gas component.
       sizing:
-        choose_one:
+        constant_pressure_choose_one:
           - membrane_area_per_length
-          - full geometry keys
           - module_geometry
+        pressure_drop_required:
+          - module_geometry
+        rules:
+          - Provide either membrane_area_per_length or module_geometry, not both.
+          - membrane_area_per_length is enough only for constant-pressure simulations.
+          - When feed_pressure_mode or permeate_pressure_mode is state_variable, provide complete module_geometry; membrane_area_per_length alone is not sufficient.
       simulation:
         required:
           - flow_pattern
@@ -248,7 +253,7 @@ reference_requirements:
     missing_feed_total_or_composition: Provide feed_inlet_flow plus feed_mole_fractions, or feed_inlet_flows.
     mixed_feed_modes: Use feed_inlet_flows or total-flow plus composition, not both.
     missing_transport: Add every component to gas_transport_coefficients.
-    missing_geometry: Add full geometry keys or module_geometry when feed_pressure_mode or permeate_pressure_mode is state_variable.
+    missing_geometry: Add complete module_geometry when feed_pressure_mode or permeate_pressure_mode is state_variable; membrane_area_per_length alone is not sufficient.
     missing_viscosity: Add Vis_GAS to model_source when any pressure side uses state_variable.
     missing_heat_capacity: Add Cp_IG to model_source when heat_transfer_mode is non-isothermal.
 """
