@@ -36,6 +36,7 @@ reference_requirements:
             required:
               - feed_inlet_flows
         rules:
+          - feed_inlet_flows represents individual molar flowrate entries for every active component.
           - Do not mix feed_inlet_flows with total-flow plus composition inputs.
           - Mole fractions are dimensionless and must include every component.
       operating_conditions:
@@ -250,12 +251,55 @@ reference_requirements:
         shooting_multistart: true
 
   common_missing_input_diagnostics:
-    missing_feed_total_or_composition: Provide feed_inlet_flow plus feed_mole_fractions, or feed_inlet_flows.
+    missing_feed_total_or_composition: Provide feed_inlet_flow plus feed_mole_fractions, or feed_inlet_flows as individual component molar flowrates.
     mixed_feed_modes: Use feed_inlet_flows or total-flow plus composition, not both.
     missing_transport: Add every component to gas_transport_coefficients.
     missing_geometry: Add complete module_geometry when feed_pressure_mode or permeate_pressure_mode is state_variable; membrane_area_per_length alone is not sufficient.
     missing_viscosity: Add Vis_GAS to model_source when any pressure side uses state_variable.
     missing_heat_capacity: Add Cp_IG to model_source when heat_transfer_mode is non-isothermal.
+
+    invalid_components_shape: >
+      components must be a list of component dictionaries, not formula-state strings.
+      Use entries such as {name: oxygen, formula: O2, state: g, mole_fraction: 0.205}.
+      Formula-state labels such as O2-g are derived from these dictionaries and are used
+      only as keys in component-dependent inputs.
+
+    invalid_component_keys: >
+      feed_mole_fractions, feed_inlet_flows, permeate_inlet_flows, and gas_transport_coefficients
+      must be keyed by formula-state labels derived from components, such as O2-g and N2-g.
+      Every active component must have a matching key.
+
+    invalid_length_span_shape: >
+      length_span must be a two-number list or tuple in meters, for example [0, 0.25].
+      Do not pass unit strings such as ["0 m", "0.25 m"] and do not pass CustomProp objects.
+
+    invalid_custom_property_shape: >
+      Unit-bearing scalar fields such as feed_inlet_flow, feed_pressure, feed_inlet_temperature,
+      permeate_pressure, membrane_area_per_length, and gas_transport_coefficients must use
+      {value: <number>, unit: <unit>} objects unless the live schema states otherwise.
+
+    invalid_transport_unit: >
+      Gas permeance units must use an accepted unit string. Prefer GPU when source data are
+      reported in GPU, or use mol/s.m2.Pa for SI permeance. Avoid alternate spellings such as
+      mol/m2.s.Pa unless accepted by the live schema.
+
+    invalid_feed_composition_units: >
+      Mole fractions are dimensionless. Use unit: "" or unit: "1" only if accepted by the live
+      schema, and ensure mole fractions include every component and sum to 1.0.
+
+    invalid_reference_content_shape: >
+      reference_content should be complete pyThermoDB-compatible YAML. If direct table snippets
+      fail validation, wrap tables under REFERENCES -> <reference-id> -> DATABOOK-ID -> TABLES
+      and validate again with check_yaml_reference.
+
+    ambiguous_membrane_sizing: >
+      Provide either membrane_area_per_length or module_geometry, not both. For constant-pressure
+      simulations membrane_area_per_length is sufficient; for pressure-drop simulations use
+      complete module_geometry.
+
+    pressure_drop_reference_gap: >
+      If feed_pressure_mode or permeate_pressure_mode is state_variable, reference_content must
+      include gas viscosity requirements such as Vis_GAS in addition to molecular weight.
 """
 
 
