@@ -2,7 +2,7 @@
   "case": "case-2",
   "source": "examples/case-2.md",
   "assumptions": {
-    "feed_volumetric_flow_source": "validation result\\flowrates.json",
+    "feed_volumetric_flow_source": "examples\\validation result\\flowrates.json",
     "number_of_elements": "52 documented in case-2.md; counter-current BVP uses mesh_points",
     "packing_fraction": "documented in case-2.md but not accepted by the current module_geometry schema"
   },
